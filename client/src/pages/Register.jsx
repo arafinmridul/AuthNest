@@ -21,6 +21,11 @@ const Register = () => {
             }),
         });
 
+        if (!response.ok) {
+            console.log("Error:", response.status, response.statusText);
+            return;
+        }
+
         const data = await response.json();
         console.log(data);
     }
