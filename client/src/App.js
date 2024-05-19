@@ -1,12 +1,13 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
+import Navbar from "./components/Navbar";
 import { Register, Login, Dashboard } from "./pages";
 
 const App = () => {
     return (
         <>
-            <h1>HI</h1>
+            <Navbar />
             <Routes>
                 <Route exact path="/" element={<Dashboard />} />
                 <Route exact path="/dashboard" element={<Dashboard />} />
