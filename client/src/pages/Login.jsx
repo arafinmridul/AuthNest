@@ -27,9 +27,10 @@ const Login = () => {
 
         const data = await response.json();
         if (data.auth && data.user) {
-            setAuth(true);
+            localStorage.setItem("token", data.user);
             alert("Login Successful");
             window.location.href = "/dashboard";
+            setAuth(true);
         } else {
             alert("Please enter correct email and password");
         }

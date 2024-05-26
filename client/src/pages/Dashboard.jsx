@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Buffer } from "buffer";
-import jwt from "jsonwebtoken";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -26,13 +24,27 @@ const Dashboard = () => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            const user = jwt.decode(token);
-            if (!user) {
-                localStorage.removeItem("token");
-                history.replace("/login");
-            } else {
-                populateQuote();
-            }
+            fetch("http://localhost:5000/api/decode", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ token }),
+            })
+                .then((res) => res.json())
+                .then((user) => {
+                    if (!user) {
+                        localStorage.removeItem("token");
+                        history.replace("/login");
+                    } else {
+                        populateQuote();
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                    localStorage.removeItem("token");
+                    history.replace("/login");
+                });
         }
     }, []);
 
@@ -60,8 +72,7 @@ const Dashboard = () => {
     }
 
     return (
-        <div>
-            <h1>Your quote: {quote || "No quote found"}</h1>
+        <div className="container mt-4">
             <form onSubmit={updateQuote}>
                 <input
                     type="text"
@@ -71,6 +82,12 @@ const Dashboard = () => {
                 />
                 <input type="submit" value="Update quote" />
             </form>
+            <h1 className="mt-4">
+                Your quote:{" "}
+                <span className="text-primary">
+                    {quote || "No quote found"}
+                </span>
+            </h1>
         </div>
     );
 };

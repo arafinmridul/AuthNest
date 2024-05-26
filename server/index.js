@@ -67,4 +67,33 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
+// jwt thing
+app.post("/api/decode", (req, res) => {
+    const token = req.body.token;
+    try {
+        const decoded = jwt.decode(token);
+        res.json(decoded);
+    } catch (err) {
+        res.status(400).json({ error: "Invalid token" });
+    }
+});
+
+app.post("/api/quote", async (req, res) => {
+    const token = req.headers["x-access-token"];
+
+    try {
+        const decoded = jwt.verify(token, "secret123");
+        const email = decoded.email;
+        await User.updateOne(
+            { email: email },
+            { $set: { quote: req.body.quote } }
+        );
+
+        return res.json({ status: "ok" });
+    } catch (error) {
+        console.log(error);
+        res.json({ status: "error", error: "invalid token" });
+    }
+});
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
