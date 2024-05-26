@@ -26,10 +26,14 @@ const Login = () => {
         }
 
         const data = await response.json();
-        if (data.auth) {
+        if (data.auth && data.user) {
             setAuth(true);
+            alert("Login Successful");
+            window.location.href = "/dashboard";
+        } else {
+            alert("Please enter correct email and password");
         }
-        console.log(data.auth);
+        console.log(data);
     }
 
     return (

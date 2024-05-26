@@ -3,6 +3,7 @@ const app = express();
 const PORT = 5000;
 
 const User = require("./models/user.model");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 const cors = require("cors");
@@ -44,6 +45,14 @@ app.post("/api/login", async (req, res) => {
         const user = await User.findOne({ email: req.body.email });
         if (!user) return res.json({ auth: false });
 
+        const token = jwt.sign(
+            {
+                name: user.name,
+                email: user.email,
+            },
+            "secret123"
+        );
+
         // const validPassword = await bcrypt.compare(
         //     req.body.password,
         //     user.password
@@ -51,7 +60,7 @@ app.post("/api/login", async (req, res) => {
         const validPassword = req.body.password == user.password;
         if (!validPassword) return res.json({ auth: false });
 
-        res.json({ auth: true });
+        res.json({ auth: true, user: token });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Error logging in" });
